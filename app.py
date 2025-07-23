@@ -9,10 +9,11 @@ input_text = st.text_area("Cole aqui o texto (ex: roteiro ou transcrição)")
 
 if st.button("Analisar"):
     if input_text.strip():
-        resultTestBechdel = bechdel_test(input_text)
-        st.write("**Resultado:**", dict(resultTestBechdel))
 
         result = analyze_text(input_text)
+
+        resultTestBechdel = bechdel_test(result)
+        st.write("**Resultado:**", dict(resultTestBechdel))
 
         if result["characters_by_gender"]:
             st.subheader("Distribuição de personagens por gênero")
