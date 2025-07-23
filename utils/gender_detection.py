@@ -1,27 +1,25 @@
 import os
 import logging
-from dotenv import load_dotenv
-import google.generativeai as genai
+from utils.gemini_client import gemini_model
+
 
 
 logging.basicConfig(level=logging.DEBUG, format="%(levelname)s - %(message)s")
 
 
-load_dotenv()
 
 gemini_key = os.getenv("GEMINI_API_KEY")
 if not gemini_key:
     raise EnvironmentError("Chave GEMINI_API_KEY não encontrada no ambiente.")
 
-genai.configure(api_key=gemini_key)
-gemini_model = genai.GenerativeModel("gemini-2.5-flash")
 logging.info("Gemini configurado com sucesso.")
 
 
 def detect_explicit_gender(text: str):
     logging.debug(f"Analisando texto: {text}")
     prompt = (
-        f"Analise a seguinte frase e determine o gênero explicitamente auto declarado:\n\n"
+        f"Analise a seguinte frase e determine se quem fala auto declara o gênero explicitamente, diga qual, "
+        f"senão vai na opção Nenhum:\n\n"
         f"\"{text}\"\n\nResponda apenas com: Feminino, Masculino, Não-binárie ou Nenhum."
     )
     try:
@@ -47,7 +45,8 @@ def detect_explicit_gender(text: str):
 def infer_gender_by_name(name: str):
     logging.debug(f"Inferindo gênero pelo nome: {name}")
     prompt = (
-        f"Determine se o nome '{name}' geralmente é associado a um gênero específico "
+        f"Dado apenas o nome: '{name}' de uma pessoa, classifique o gênero mais provável"
+        f"(considere que pode ser um nome famoso):  "
         f"e responda apenas com: Feminino, Masculino, Não-binárie ou Desconhecido."
     )
     try:

@@ -1,5 +1,6 @@
 import re
 import logging
+from utils.gemini_client import gemini_model
 
 def extract_dialogues(text: str):
     logging.debug("=== Iniciando extração de diálogos ===")
@@ -23,8 +24,25 @@ def extract_dialogues(text: str):
     logging.debug(f"Total de diálogos extraídos: {len(dialogues)}")
     return dialogues
 
-def extract_characters_with_gender(text):
-    return {}  # TODO: implementar
 
-def is_about_men(text):
-    return False  # TODO: implementar
+logger = logging.getLogger(__name__)
+
+def is_about_men(dialogue_text: str) -> bool:
+
+    logger.debug(f"Analisando tema do diálogo com IA: {dialogue_text}")
+    prompt = (
+        f"Analise o seguinte diálogo e determine se ele é sobre um homem (homens, namorados, maridos, "
+        f"relacionamentos amorosos etc.):\n\n"
+        f"\"{dialogue_text}\"\n\n"
+        f"Responda apenas com 'Sim' ou 'Não'."
+    )
+
+    try:
+        response = gemini_model.generate_content(prompt)
+        result = response.text.strip().lower()
+        logger.debug(f"Resultado IA (sobre homens): {result}")
+        return "sim" in result
+    except Exception as e:
+        logger.error(f"Erro ao analisar com IA: {e}")
+        keywords = ["homem", "rapaz", "garoto", "namorado", "pai", "marido"]
+        return any(k in dialogue_text.lower() for k in keywords)

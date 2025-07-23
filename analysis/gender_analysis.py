@@ -47,5 +47,7 @@ def analyze_text(text):
 
     return {
         "characters_by_gender": characters_by_gender,
-        "speech_by_gender": speech_by_gender
+        "speech_by_gender": speech_by_gender,
+        "dialogues": dialogues,
+        "characters_gender": characters_gender
     }
